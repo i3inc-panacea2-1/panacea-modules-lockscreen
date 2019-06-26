@@ -34,22 +34,22 @@ namespace Panacea.Modules.LockScreen.ViewModels
             }
             LockScreenCommand = new RelayCommand(args =>
             {
-                lockScreen();
+                LockScreen();
                 SetResult(null);
             });
             TurnOffScreenCommand = new RelayCommand(args =>
             {
-                turnOffScreen();
+                TurnOffScreen();
                 SetResult(null);
             });
             LockRemoteScreenCommand = new RelayCommand(args =>
             {
-                lockRemoteScreen();
+                LockRemoteScreen();
                 SetResult(null);
             });
             UnlockRemoteScreenCommand = new RelayCommand(args =>
             {
-                unlockRemoteScreen();
+                UnlockRemoteScreen();
                 SetResult(null);
             });
         }
@@ -61,7 +61,7 @@ namespace Panacea.Modules.LockScreen.ViewModels
         public Visibility LockScreenCommandVisibility { get; }
         public Visibility RemoteButtonsVisibility { get; private set; }
 
-        private void lockScreen()
+        private void LockScreen()
         {
             if (_core.TryGetUiManager(out IUiManager ui))
             {
@@ -74,7 +74,7 @@ namespace Panacea.Modules.LockScreen.ViewModels
             }
         }
 
-        private void turnOffScreen()
+        private void TurnOffScreen()
         {
             if (_core.TryGetUiManager(out IUiManager ui))
             {
@@ -86,14 +86,14 @@ namespace Panacea.Modules.LockScreen.ViewModels
                 };
             }
         }
-        private void lockRemoteScreen()
+        private void LockRemoteScreen()
         {
             if (_core.TryGetPairingPlugin(out IPairingPlugin pairing))
             {
                 pairing.GetBoundTerminalManager()?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
             }
         }
-        private void unlockRemoteScreen()
+        private void UnlockRemoteScreen()
         {
             if (_core.TryGetPairingPlugin(out IPairingPlugin pairing))
             {

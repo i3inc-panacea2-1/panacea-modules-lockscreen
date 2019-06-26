@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace Panacea.Modules.LockScreen.ViewModels
 {
@@ -31,15 +32,15 @@ namespace Panacea.Modules.LockScreen.ViewModels
             WrongPassBlockVisibility = Visibility.Hidden;
             BlackGridClickCommand = new RelayCommand(args =>
             {
-                blackGridClick();
+                BlackGridClick();
             });
             TurnOffScreenCommand = new RelayCommand(args =>
             {
-                turnoffClick();
+                TurnoffClick();
             });
             SignoutCommand = new RelayCommand(args =>
             {
-                signoutClick();
+                SignoutClick();
             });
             UnlockCommand = new RelayCommand(args =>
             {
@@ -67,13 +68,26 @@ namespace Panacea.Modules.LockScreen.ViewModels
             OnPropertyChanged(nameof(WrongPassBlockVisibility));
             CloseRequest?.Invoke(this, null);
         }
-        private async void signoutClick()
+
+        public override void Activate()
+        {
+            var w = Window.GetWindow(this.View);
+            var h = new WindowInteropHelper(w);
+            Monitor.off(h.Handle);
+        }
+
+        public override void Deactivate()
+        {
+            Monitor.on();
+        }
+
+        private async void SignoutClick()
         {
             await _core.UserService.LogoutAsync();
             CloseRequest?.Invoke(this, null);
         }
 
-        private void turnoffClick()
+        private void TurnoffClick()
         {
             BlackGridVisibility = Visibility.Visible;
             OnPropertyChanged(nameof(BlackGridVisibility));
@@ -86,7 +100,7 @@ namespace Panacea.Modules.LockScreen.ViewModels
                 Monitor.MinimizeBrightness();
             }
         }
-        private void blackGridClick() {
+        private void BlackGridClick() {
             BlackGridVisibility = Visibility.Hidden;
             OnPropertyChanged(nameof(BlackGridVisibility));
             Monitor.MaximizeBrightness();

@@ -71,7 +71,8 @@
                     CommandParameter="{Binding ElementName=passdob}"
                     Content="{multilinguality:Translate 'Unlock',
                                                         'LockScreen'}"
-                    FontSize="{DynamicResource FontSize-X-Large}" />
+                    FontSize="{DynamicResource FontSize-X-Large}"
+                    Style="{DynamicResource PrimaryButton}"/>
                 <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
@@ -98,6 +99,7 @@
 
         </Grid>
         <Grid
+            d:IsHidden="true"
             Name="BlackGrid"
             Background="Black"
             Visibility="{Binding BlackGridVisibility}">
