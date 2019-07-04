@@ -25,9 +25,9 @@ namespace Panacea.Modules.LockScreen.ViewModels
             _requireLogin = requireLogin;
             LockScreenCommandVisibility = _requireLogin ? Visibility.Visible : Visibility.Collapsed;
             RemoteButtonsVisibility = Visibility.Collapsed;
-            if(core.TryGetPairingPlugin(out IPairingPlugin pairing))
+            if(core.TryGetPairing(out IBoundTerminalManager pairing))
             {
-                if (pairing.GetBoundTerminalManager().IsBound())
+                if (pairing.IsBound())
                 {
                     RemoteButtonsVisibility = Visibility.Visible;
                 };
@@ -88,16 +88,16 @@ namespace Panacea.Modules.LockScreen.ViewModels
         }
         private void LockRemoteScreen()
         {
-            if (_core.TryGetPairingPlugin(out IPairingPlugin pairing))
+            if (_core.TryGetPairing(out IBoundTerminalManager pairing))
             {
-                pairing.GetBoundTerminalManager()?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
+                pairing?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
             }
         }
         private void UnlockRemoteScreen()
         {
-            if (_core.TryGetPairingPlugin(out IPairingPlugin pairing))
+            if (_core.TryGetPairing(out IBoundTerminalManager pairing))
             {
-                pairing.GetBoundTerminalManager()?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
+                pairing?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
             }
         }
         private Window GetFullScreenWindow(FrameworkElement view)

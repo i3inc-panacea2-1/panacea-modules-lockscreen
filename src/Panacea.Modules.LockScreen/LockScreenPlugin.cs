@@ -49,11 +49,11 @@ namespace Panacea.Modules.LockScreen
 
         private void SetupBoundTerminalListeners()
         {
-            if (_core.TryGetPairingPlugin(out IPairingPlugin pairing))
+            if (_core.TryGetPairing(out IBoundTerminalManager pairing))
             {
-                if (pairing.GetBoundTerminalManager().IsBound())
+                if (pairing.IsBound())
                 {
-                    pairing.GetBoundTerminalManager().GetBoundTerminal().On<dynamic>("lockscreen", async (obj) =>
+                    pairing.GetBoundTerminal().On<dynamic>("lockscreen", async (obj) =>
                     {
                         switch ((string)obj.Action.ToString())
                         {
