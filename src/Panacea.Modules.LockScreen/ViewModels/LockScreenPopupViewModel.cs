@@ -65,11 +65,14 @@ namespace Panacea.Modules.LockScreen.ViewModels
         {
             if (_core.TryGetUiManager(out IUiManager ui))
             {
+                ui.IsNavigationDisabled = true;
                 LockBlankPageViewModel viewModel = new LockBlankPageViewModel(_core, true);
                 Window newWindow = GetFullScreenWindow(viewModel.View);
                 viewModel.CloseRequest += (object sender, EventArgs e) =>
                 {
                     newWindow.Close();
+
+                    ui.IsNavigationDisabled = false;
                 };
             }
         }
