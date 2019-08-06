@@ -18,7 +18,7 @@
                 FontSize="{DynamicResource FontSize-Xx-Large}"
                 Foreground="Black"
                 Text="{multilinguality:Translate 'Are you sure you want to turn off the screen?',
-                                                 'core'}"
+                                                 'LockScreen'}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
             <StackPanel
