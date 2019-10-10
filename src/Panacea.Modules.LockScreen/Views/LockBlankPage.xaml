@@ -98,21 +98,6 @@
             </StackPanel>
 
         </Grid>
-        <Grid
-            d:IsHidden="true"
-            Name="BlackGrid"
-            Background="Black"
-            Visibility="{Binding BlackGridVisibility}">
-            <Grid.InputBindings>
-                <MouseBinding Command="{Binding BlackGridClickCommand}" Gesture="LeftClick" />
-            </Grid.InputBindings>
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="{DynamicResource FontSize-Large-Xx}"
-                Foreground="White"
-                Text="{multilinguality:Translate 'Tap the screen to unlock',
-                                                 'LockScreen'}" />
-        </Grid>
+      
     </Grid>
 </UserControl>

@@ -86,10 +86,14 @@
     </Compile>
     <Compile Include="LockScreenPlugin.cs" />
     <Compile Include="Monitor.cs" />
+    <Compile Include="MonitorHook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\LockBlankPageViewModel.cs" />
     <Compile Include="ViewModels\LockScreenButtonViewModel.cs" />
     <Compile Include="ViewModels\LockScreenPopupViewModel.cs" />
+    <Compile Include="Views\TapToUnlockWindow.xaml.cs">
+      <DependentUpon>TapToUnlockWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LockBlankPage.xaml.cs">
       <DependentUpon>LockBlankPage.xaml</DependentUpon>
     </Compile>
@@ -128,6 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TapToUnlockWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

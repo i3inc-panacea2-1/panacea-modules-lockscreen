@@ -16,5 +16,6 @@
         Image=""
         Text="{multilinguality:Translate 'Lock',
                                          'LockScreen'}"
+        
         TextVisibility="Visible" />
 </UserControl>

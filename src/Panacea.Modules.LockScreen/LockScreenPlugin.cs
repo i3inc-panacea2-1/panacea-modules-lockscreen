@@ -12,20 +12,37 @@ using System.Windows.Interop;
 using Panacea.Modularity.MediaPlayerContainer;
 using System.Windows.Threading;
 using System.Windows;
+using Panacea.Modules.LockScreen.Views;
+using System.Diagnostics;
 
 namespace Panacea.Modules.LockScreen
 {
     public class LockScreenPlugin : IPlugin
     {
         private PanaceaServices _core;
+        private readonly MonitorHook _hook;
+        public static TapToUnlockWindow _unlockWindow;
 
         public LockScreenPlugin(PanaceaServices core)
         {
             _core = core;
+            _hook = new MonitorHook();
+            _hook.ScreenOn += _hook_ScreenOn;
+        }
+
+        private void _hook_ScreenOn(object sender, EventArgs e)
+        {
+            Debug.WriteLine(DateTime.Now.ToLongTimeString());
+            Application.Current.Dispatcher.Invoke(async() =>
+            {
+                await Task.Delay(2000);
+                _unlockWindow?.Hide();
+            });
         }
 
         public Task BeginInit()
         {
+            _hook.Start();
             return Task.CompletedTask;
         }
 
@@ -60,7 +77,7 @@ namespace Panacea.Modules.LockScreen
                             case "turnscreenoff":
                                 if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PANACEA_SCREEN_ACTIVE")))
                                 {
-                                    if(_core.TryGetUiManager(out IUiManager ui))
+                                    if (_core.TryGetUiManager(out IUiManager ui))
                                     {
                                         Monitor.off(new WindowInteropHelper(Window.GetWindow(ui as FrameworkElement)).Handle);
                                     }
@@ -71,7 +88,8 @@ namespace Panacea.Modules.LockScreen
                                 }
                                 await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                                 {
-                                    if(_core.TryGetMediaPlayerContainer(out IMediaPlayerContainer container)){
+                                    if (_core.TryGetMediaPlayerContainer(out IMediaPlayerContainer container))
+                                    {
                                         container.CurrentMediaPlayer?.Stop();
                                     }
                                 }));
@@ -94,6 +112,7 @@ namespace Panacea.Modules.LockScreen
         }
         public Task Shutdown()
         {
+            _hook.Stop();
             return Task.CompletedTask;
         }
     }

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Panacea.Modules.LockScreen.Views;
+using System.Windows.Interop;
 
 namespace Panacea.Modules.LockScreen.ViewModels
 {
@@ -67,12 +68,12 @@ namespace Panacea.Modules.LockScreen.ViewModels
             {
                 ui.IsNavigationDisabled = true;
                 LockBlankPageViewModel viewModel = new LockBlankPageViewModel(_core, true);
-                Window newWindow = GetFullScreenWindow(viewModel.View);
+                ui.Navigate(viewModel, false);
                 viewModel.CloseRequest += (object sender, EventArgs e) =>
                 {
-                    newWindow.Close();
-
+                    
                     ui.IsNavigationDisabled = false;
+                    ui.GoBack();
                 };
             }
         }
@@ -81,12 +82,15 @@ namespace Panacea.Modules.LockScreen.ViewModels
         {
             if (_core.TryGetUiManager(out IUiManager ui))
             {
-                LockBlankPageViewModel viewModel = new LockBlankPageViewModel(_core, false);
-                Window newWindow = GetFullScreenWindow(viewModel.View);
-                viewModel.CloseRequest += (object sender, EventArgs e) =>
+               
+                if (LockScreenPlugin._unlockWindow == null)
                 {
-                    newWindow.Close();
-                };
+                    LockScreenPlugin._unlockWindow = new TapToUnlockWindow();
+                }
+                LockScreenPlugin._unlockWindow.Show();
+                var w = Window.GetWindow(this.View);
+                var h = new WindowInteropHelper(w);
+                Monitor.off(h.Handle);
             }
         }
         private void LockRemoteScreen()
@@ -103,16 +107,6 @@ namespace Panacea.Modules.LockScreen.ViewModels
                 pairing?.GetBoundTerminal()?.Send("lockscreen", new { Action = "turnscreenoff" });
             }
         }
-        private Window GetFullScreenWindow(FrameworkElement view)
-        {
-            Window w = new Window();
-            w.Topmost = true;
-            w.Content = view;
-            w.WindowState = WindowState.Maximized;
-            w.WindowStyle = WindowStyle.None;
-            w.ResizeMode = ResizeMode.NoResize;
-            w.Show();
-            return w;
-        }
+        
     }
 }

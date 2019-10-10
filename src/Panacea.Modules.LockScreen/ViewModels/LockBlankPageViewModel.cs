@@ -30,10 +30,7 @@ namespace Panacea.Modules.LockScreen.ViewModels
             _core = core;
             this.requirelogin = requirelogin;
             WrongPassBlockVisibility = Visibility.Hidden;
-            BlackGridClickCommand = new RelayCommand(args =>
-            {
-                BlackGridClick();
-            });
+           
             TurnOffScreenCommand = new RelayCommand(args =>
             {
                 TurnoffClick();
@@ -47,7 +44,7 @@ namespace Panacea.Modules.LockScreen.ViewModels
                 unlockClick((args as PasswordBox).Password);
             });
         }
-        public RelayCommand BlackGridClickCommand { get; set; }
+
         public RelayCommand TurnOffScreenCommand { get; set; }
         public RelayCommand SignoutCommand { get; set; }
         public RelayCommand UnlockCommand { get; set; }
@@ -98,19 +95,6 @@ namespace Panacea.Modules.LockScreen.ViewModels
             else
             {
                 Monitor.MinimizeBrightness();
-            }
-        }
-        private void BlackGridClick() {
-            BlackGridVisibility = Visibility.Hidden;
-            OnPropertyChanged(nameof(BlackGridVisibility));
-            Monitor.MaximizeBrightness();
-            if (_core.UserService.User.Id != null && requirelogin)
-            {
-                //passdob.Focus();
-            }
-            else
-            {
-                CloseRequest?.Invoke(this, null);
             }
         }
     }
