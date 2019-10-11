@@ -67,7 +67,7 @@ namespace Panacea.Modules.LockScreen
 
         private async void OnAction(dynamic obj)
         {
-            switch ((string)obj.Action.ToString())
+            switch ((string)obj["Action"].ToString())
             {
                 case "turnscreenoff":
                     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PANACEA_SCREEN_ACTIVE")))
