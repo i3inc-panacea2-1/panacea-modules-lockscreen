@@ -61,7 +61,46 @@ namespace Panacea.Modules.LockScreen
             {
                 _core.Logger.Error(this, "ui manager not loaded");
             }
+            SetupBoundTerminalListeners();
             return Task.CompletedTask;
+        }
+
+        private async void OnAction(dynamic obj)
+        {
+            switch ((string)obj.Action.ToString())
+            {
+                case "turnscreenoff":
+                    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PANACEA_SCREEN_ACTIVE")))
+                    {
+                        if (_core.TryGetUiManager(out IUiManager ui))
+                        {
+                            Monitor.off(new WindowInteropHelper(Window.GetWindow(ui as FrameworkElement)).Handle);
+                        }
+                    }
+                    else
+                    {
+                        Monitor.MinimizeBrightness();
+                    }
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        if (_core.TryGetMediaPlayerContainer(out IMediaPlayerContainer container))
+                        {
+                            container.CurrentMediaPlayer?.Stop();
+                        }
+                    }));
+                    break;
+
+                case "turnscreenon":
+                    Monitor.on();
+                    Monitor.MaximizeBrightness();
+                    break;
+                case "signout":
+                    if (_core.UserService.User.Id != null)
+                    {
+                        await _core.UserService.SetUser(null);
+                    }
+                    break;
+            }
         }
 
         private void SetupBoundTerminalListeners()
@@ -70,49 +109,20 @@ namespace Panacea.Modules.LockScreen
             {
                 if (pairing.IsBound())
                 {
-                    pairing.GetBoundTerminal().On<dynamic>("lockscreen", async (obj) =>
-                    {
-                        switch ((string)obj.Action.ToString())
-                        {
-                            case "turnscreenoff":
-                                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PANACEA_SCREEN_ACTIVE")))
-                                {
-                                    if (_core.TryGetUiManager(out IUiManager ui))
-                                    {
-                                        Monitor.off(new WindowInteropHelper(Window.GetWindow(ui as FrameworkElement)).Handle);
-                                    }
-                                }
-                                else
-                                {
-                                    Monitor.MinimizeBrightness();
-                                }
-                                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                {
-                                    if (_core.TryGetMediaPlayerContainer(out IMediaPlayerContainer container))
-                                    {
-                                        container.CurrentMediaPlayer?.Stop();
-                                    }
-                                }));
-                                break;
-
-                            case "turnscreenon":
-                                Monitor.on();
-                                Monitor.MaximizeBrightness();
-                                break;
-                            case "signout":
-                                if (_core.UserService.User.Id != null)
-                                {
-                                    await _core.UserService.SetUser(null);
-                                }
-                                break;
-                        }
-                    });
+                    pairing.GetBoundTerminal().On<dynamic>("lockscreen", OnAction);
                 }
             }
         }
         public Task Shutdown()
         {
             _hook.Stop();
+            if (_core.TryGetPairing(out IBoundTerminalManager pairing))
+            {
+                if (pairing.IsBound())
+                {
+                    pairing.GetBoundTerminal().Off<dynamic>("lockscreen", OnAction);
+                }
+            }
             return Task.CompletedTask;
         }
     }
